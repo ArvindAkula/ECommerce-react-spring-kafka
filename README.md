@@ -1,95 +1,115 @@
 # E-Commerce Application with React, Spring Boot, and Kafka
 
-This project demonstrates a simple e-commerce application with:
+This project demonstrates a simple e-commerce application with event-driven architecture using:
 
 - React frontend for browsing products and placing orders
-- Spring Boot backend with REST APIs
-- Apache Kafka for event-driven architecture
+- Spring Boot microservices with REST APIs
+- Apache Kafka for event-driven communication
 - Real-time order processing workflow
 
-## Features
+## Architecture Overview
 
-- Product catalog browsing
-- Shopping cart management
-- Order placement and processing
-- Real-time inventory updates
-- Payment processing
-- Order notifications
-- Analytics and reporting
+![Architecture](docs/architecture.png)
+
+The system consists of the following components:
+
+1. **React Frontend:** A responsive web application for users to browse products, add to cart, and place orders.
+
+2. **Order Service:** Handles order creation and management. When an order is placed, it publishes an order event to Kafka.
+
+3. **Inventory Service:** Manages product inventory. It consumes order events to update product stock quantities.
+
+4. **Payment Service:** Processes payments for orders. It consumes order events and handles payment processing.
+
+5. **Notification Service:** Sends email notifications at different stages of the order process. It consumes events from other services.
+
+6. **Apache Kafka:** Acts as the event bus for communication between microservices, promoting loose coupling.
 
 ## Project Structure
 
 ```
 ├── frontend/           # React frontend application
 └── backend/            # Spring Boot backend services
+    ├── common/         # Shared code, events, and models
     ├── order-service/  # Handles order creation and management
     ├── inventory-service/ # Manages product inventory
     ├── payment-service/   # Processes payments
     └── notification-service/ # Sends order confirmations
 ```
 
-## Getting Started
+## Event Flow
+
+The application implements the following event-driven workflow:
+
+1. **Order Placement:**
+   - User places an order through the frontend
+   - Order Service creates the order and publishes an ORDER_CREATED event
+
+2. **Parallel Processing:**
+   - Inventory Service: Reserves products, updates stock
+   - Payment Service: Processes payment
+   - Notification Service: Sends order confirmation email
+
+3. **Payment Status:**
+   - Payment Service publishes either PAYMENT_COMPLETED or PAYMENT_FAILED event
+
+4. **Order Completion:**
+   - Order Service updates order status based on inventory and payment events
+   - Notification Service sends appropriate emails based on status changes
+
+## Technologies Used
+
+- **Frontend:** React, Tailwind CSS, Axios
+- **Backend:** Spring Boot, Spring Data JPA, Spring Kafka
+- **Database:** PostgreSQL
+- **Messaging:** Apache Kafka
+- **Testing:** JUnit 5, Mockito, TestContainers
+
+## Running the Application
 
 ### Prerequisites
-
 - Node.js and npm
 - Java 17+
 - Maven
-- Docker (for running Kafka)
+- Docker (for running Kafka and PostgreSQL)
 
-### Running Kafka
-
+### Start Infrastructure
 ```bash
-# Start Kafka using Docker Compose
+# Start Kafka and PostgreSQL
 docker-compose up -d
 ```
 
-### Running the Backend
-
+### Start Backend Services
 ```bash
-# Navigate to backend directory
+# Build and start all services
 cd backend
-
-# Build all services
 mvn clean install
-
-# Run each service
 mvn spring-boot:run -pl order-service
 mvn spring-boot:run -pl inventory-service
 mvn spring-boot:run -pl payment-service
 mvn spring-boot:run -pl notification-service
 ```
 
-### Running the Frontend
-
+### Start Frontend
 ```bash
-# Navigate to frontend directory
 cd frontend
-
-# Install dependencies
 npm install
-
-# Start the development server
 npm start
 ```
 
-## Architecture
+## API Documentation
 
-This application uses an event-driven architecture with Apache Kafka:
+Each microservice exposes REST APIs:
 
-1. Customer places an order through the frontend
-2. Order Service receives the order and publishes an event to Kafka
-3. Multiple services consume the order event:
-   - Inventory Service updates product stock levels
-   - Payment Service processes the payment
-   - Notification Service sends order confirmation
-   - Analytics Service updates dashboards and reports
+- **Order Service:** `http://localhost:8081/api/orders`
+- **Inventory Service:** `http://localhost:8082/api/products`
+- **Payment Service:** `http://localhost:8083/api/payments`
 
 ## Testing
 
-Unit and integration tests are available for all services:
+Each service includes unit and integration tests:
 
 ```bash
-# Run tests
+cd backend
 mvn test
 ```
