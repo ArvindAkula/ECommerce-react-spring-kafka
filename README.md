@@ -1,115 +1,112 @@
-# E-Commerce Application with React, Spring Boot, and Kafka
+# ECommerce Application with React, Spring Boot, and Kafka
 
-This project demonstrates a simple e-commerce application with event-driven architecture using:
+This is an e-commerce application built with a microservices architecture using React for the frontend, Spring Boot for the backend, and Apache Kafka for event-driven communication between services.
 
-- React frontend for browsing products and placing orders
-- Spring Boot microservices with REST APIs
-- Apache Kafka for event-driven communication
-- Real-time order processing workflow
+## Features
 
-## Architecture Overview
+- Microservices architecture with service isolation
+- Event-driven communication using Apache Kafka
+- React frontend for product listings, shopping cart, and checkout
+- RESTful APIs for product, order, and payment management
+- Swagger/OpenAPI documentation for all APIs
+- Containerization using Docker
+- Database persistence with PostgreSQL
 
-![Architecture](docs/architecture.png)
+## Architecture
 
-The system consists of the following components:
+The application consists of the following components:
 
-1. **React Frontend:** A responsive web application for users to browse products, add to cart, and place orders.
+- **Frontend**: React application
+- **Backend Services**:
+  - **Inventory Service**: Manages products and stock levels
+  - **Order Service**: Handles order creation and processing
+  - **Payment Service**: Processes payments
+  - **Notification Service**: Sends notifications (e.g., order confirmations)
+- **Kafka**: For asynchronous communication between services
+- **PostgreSQL**: For data persistence
 
-2. **Order Service:** Handles order creation and management. When an order is placed, it publishes an order event to Kafka.
-
-3. **Inventory Service:** Manages product inventory. It consumes order events to update product stock quantities.
-
-4. **Payment Service:** Processes payments for orders. It consumes order events and handles payment processing.
-
-5. **Notification Service:** Sends email notifications at different stages of the order process. It consumes events from other services.
-
-6. **Apache Kafka:** Acts as the event bus for communication between microservices, promoting loose coupling.
-
-## Project Structure
-
-```
-├── frontend/           # React frontend application
-└── backend/            # Spring Boot backend services
-    ├── common/         # Shared code, events, and models
-    ├── order-service/  # Handles order creation and management
-    ├── inventory-service/ # Manages product inventory
-    ├── payment-service/   # Processes payments
-    └── notification-service/ # Sends order confirmations
-```
-
-## Event Flow
-
-The application implements the following event-driven workflow:
-
-1. **Order Placement:**
-   - User places an order through the frontend
-   - Order Service creates the order and publishes an ORDER_CREATED event
-
-2. **Parallel Processing:**
-   - Inventory Service: Reserves products, updates stock
-   - Payment Service: Processes payment
-   - Notification Service: Sends order confirmation email
-
-3. **Payment Status:**
-   - Payment Service publishes either PAYMENT_COMPLETED or PAYMENT_FAILED event
-
-4. **Order Completion:**
-   - Order Service updates order status based on inventory and payment events
-   - Notification Service sends appropriate emails based on status changes
-
-## Technologies Used
-
-- **Frontend:** React, Tailwind CSS, Axios
-- **Backend:** Spring Boot, Spring Data JPA, Spring Kafka
-- **Database:** PostgreSQL
-- **Messaging:** Apache Kafka
-- **Testing:** JUnit 5, Mockito, TestContainers
-
-## Running the Application
+## Setup and Running
 
 ### Prerequisites
-- Node.js and npm
+
 - Java 17+
 - Maven
-- Docker (for running Kafka and PostgreSQL)
+- Docker and Docker Compose
+- Node.js and npm
 
-### Start Infrastructure
-```bash
-# Start Kafka and PostgreSQL
-docker-compose up -d
-```
+### Running the Application
 
-### Start Backend Services
-```bash
-# Build and start all services
-cd backend
-mvn clean install
-mvn spring-boot:run -pl order-service
-mvn spring-boot:run -pl inventory-service
-mvn spring-boot:run -pl payment-service
-mvn spring-boot:run -pl notification-service
-```
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/ArvindAkula/ECommerce-react-spring-kafka.git
+   cd ECommerce-react-spring-kafka
+   ```
 
-### Start Frontend
-```bash
-cd frontend
-npm install
-npm start
-```
+2. **Start the infrastructure (Kafka, PostgreSQL) using Docker Compose**:
+   ```bash
+   docker-compose up -d
+   ```
+
+3. **Build and run the backend services**:
+   ```bash
+   cd backend
+   mvn clean install
+   
+   # Start each service in a separate terminal
+   java -jar inventory-service/target/inventory-service-1.0-SNAPSHOT.jar
+   java -jar order-service/target/order-service-1.0-SNAPSHOT.jar
+   java -jar payment-service/target/payment-service-1.0-SNAPSHOT.jar
+   java -jar notification-service/target/notification-service-1.0-SNAPSHOT.jar
+   ```
+
+4. **Run the frontend**:
+   ```bash
+   cd frontend
+   npm install
+   npm start
+   ```
+
+5. **Access the application**:
+   - Frontend: http://localhost:3000
+   - Swagger UI (API Documentation): 
+     - Inventory Service: http://localhost:8082/swagger-ui.html
+     - Order Service: http://localhost:8081/swagger-ui.html
+     - Payment Service: http://localhost:8083/swagger-ui.html
+   - Kafka UI: http://localhost:8080
+   - PgAdmin: http://localhost:5050 (login with admin@example.com / admin)
 
 ## API Documentation
 
-Each microservice exposes REST APIs:
+Each service provides its own Swagger/OpenAPI documentation:
 
-- **Order Service:** `http://localhost:8081/api/orders`
-- **Inventory Service:** `http://localhost:8082/api/products`
-- **Payment Service:** `http://localhost:8083/api/payments`
+- Inventory Service: http://localhost:8082/swagger-ui.html
+- Order Service: http://localhost:8081/swagger-ui.html
+- Payment Service: http://localhost:8083/swagger-ui.html
 
-## Testing
+## Data Initialization
 
-Each service includes unit and integration tests:
+The application includes data initializers that automatically populate each service's database with sample data when the application starts. This includes:
 
-```bash
-cd backend
-mvn test
-```
+- Sample products in the inventory service
+- Sample orders in the order service
+- Sample payments in the payment service
+
+## Error Handling
+
+Global exception handling has been implemented to provide consistent error responses across all services:
+
+- Validation errors return field-specific error messages
+- Not found errors return appropriate 404 responses
+- Unexpected errors are logged and return a user-friendly message
+
+## CORS Configuration
+
+CORS is configured to allow the frontend to communicate with the backend services. The default configuration allows requests from `http://localhost:3000`.
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
