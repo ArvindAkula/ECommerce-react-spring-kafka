@@ -16,7 +16,7 @@ import java.util.List;
 @RequestMapping("/api/payments")
 @RequiredArgsConstructor
 @Slf4j
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "http://localhost:3000") // Changed from * to be consistent with inventory service
 public class PaymentController {
 
     private final PaymentService paymentService;
@@ -26,6 +26,13 @@ public class PaymentController {
         log.info("REST request to process payment for order: {}", paymentRequest.getOrderId());
         PaymentResponse response = paymentService.processPayment(paymentRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<PaymentResponse>> getAllPayments() {
+        log.info("REST request to get all payments");
+        List<PaymentResponse> responses = paymentService.getAllPayments();
+        return ResponseEntity.ok(responses);
     }
 
     @GetMapping("/{paymentId}")
