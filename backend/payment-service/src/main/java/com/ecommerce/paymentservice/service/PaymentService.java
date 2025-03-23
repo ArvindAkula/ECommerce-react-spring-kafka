@@ -8,6 +8,13 @@ import java.util.List;
 public interface PaymentService {
     
     /**
+     * Get all payments
+     * 
+     * @return list of all payments
+     */
+    List<PaymentResponse> getAllPayments();
+    
+    /**
      * Process a payment for an order
      * 
      * @param paymentRequest the payment details
