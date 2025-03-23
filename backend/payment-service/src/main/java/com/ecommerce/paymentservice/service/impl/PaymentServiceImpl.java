@@ -30,6 +30,15 @@ public class PaymentServiceImpl implements PaymentService {
     private final KafkaTemplate<String, Object> kafkaTemplate;
     
     @Override
+    public List<PaymentResponse> getAllPayments() {
+        log.info("Getting all payments");
+        List<Payment> payments = paymentRepository.findAll();
+        return payments.stream()
+                .map(this::mapToPaymentResponse)
+                .collect(Collectors.toList());
+    }
+    
+    @Override
     @Transactional
     public PaymentResponse processPayment(PaymentRequest paymentRequest) {
         log.info("Processing payment for order: {}", paymentRequest.getOrderId());
