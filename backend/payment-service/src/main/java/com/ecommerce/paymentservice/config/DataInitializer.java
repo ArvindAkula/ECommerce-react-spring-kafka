@@ -48,8 +48,8 @@ public class DataInitializer {
                     .orderId(UUID.randomUUID().toString()) // This would need to match a real order ID in a real app
                     .userId("user1") // Added userId to match with order service
                     .amount(new BigDecimal("1299.99"))
-                    .status(PaymentStatus.PENDING)
-                    .paymentMethod("PAYPAL")
+                        .status(PaymentStatus.PENDING)
+                        .paymentMethod("PAYPAL")
                     .transactionId(UUID.randomUUID().toString())
                     .createdAt(LocalDateTime.now().minusDays(1))
                     .updatedAt(LocalDateTime.now().minusDays(1))
@@ -61,7 +61,7 @@ public class DataInitializer {
                     .orderId(UUID.randomUUID().toString()) // This would need to match a real order ID in a real app
                     .userId("user1") // Added userId to match with order service
                     .amount(new BigDecimal("2499.99"))
-                    .status(PaymentStatus.FAILED)
+                    .status(Payment.PaymentStatus.FAILED)
                     .paymentMethod("CREDIT_CARD")
                     .transactionId(UUID.randomUUID().toString())
                     .createdAt(LocalDateTime.now().minusDays(3))

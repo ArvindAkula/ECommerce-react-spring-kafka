@@ -1,5 +1,4 @@
 package com.ecommerce.orderservice.model;
-
 import com.ecommerce.common.event.OrderEvent.OrderStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -15,18 +14,34 @@ import java.util.List;
 @Entity
 @Table(name = "orders")
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Order {
     @Id
     private String id;
-    
+
     private String userId;
-    
+
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderLineItem> items = new ArrayList<>();
-    
+
+    // Other fields...
+
+    @Builder
+    public Order(String id, String userId, BigDecimal totalAmount, String paymentMethod,
+                 OrderStatus status, LocalDateTime createdAt, LocalDateTime updatedAt) {
+        this.id = id;
+        this.userId = userId;
+        this.totalAmount = totalAmount;
+        this.paymentMethod = paymentMethod;
+        this.status = status;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.items = new ArrayList<>(); // Explicitly initialize the list
+    }
+
+
+
     private BigDecimal totalAmount;
     
     private String paymentMethod;

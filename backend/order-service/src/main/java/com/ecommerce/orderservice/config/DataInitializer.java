@@ -40,7 +40,6 @@ public class DataInitializer {
                     .paymentMethod("CREDIT_CARD")
                     .createdAt(LocalDateTime.now().minusDays(5))
                     .updatedAt(LocalDateTime.now().minusDays(4))
-                    .items(new ArrayList<>()) // Initialize the list
                     .build();
                 
                 OrderLineItem item1 = OrderLineItem.builder()
@@ -72,7 +71,6 @@ public class DataInitializer {
                     .paymentMethod("PAYPAL")
                     .createdAt(LocalDateTime.now().minusDays(1))
                     .updatedAt(LocalDateTime.now().minusDays(1))
-                    .items(new ArrayList<>()) // Initialize the list
                     .build();
                 
                 OrderLineItem item3 = OrderLineItem.builder()

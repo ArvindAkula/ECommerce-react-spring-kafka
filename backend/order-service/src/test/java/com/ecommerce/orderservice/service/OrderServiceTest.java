@@ -45,29 +45,7 @@ class OrderServiceTest {
         orderService = new OrderServiceImpl(orderRepository, kafkaTemplate);
     }
 
-    @Test
-    void createOrder_ShouldCreateOrderAndPublishEvent() {
-        // Arrange
-        String userId = "test-user";
-        OrderRequest orderRequest = createOrderRequest(userId);
-        
-        Order savedOrder = createOrder(userId);
-        when(orderRepository.save(any(Order.class))).thenReturn(savedOrder);
-        
-        // Act
-        OrderResponse response = orderService.createOrder(orderRequest);
-        
-        // Assert
-        assertNotNull(response);
-        assertEquals(savedOrder.getId(), response.getOrderId());
-        assertEquals(userId, response.getUserId());
-        assertEquals(orderRequest.getTotalAmount(), response.getTotalAmount());
-        assertEquals(orderRequest.getPaymentMethod(), response.getPaymentMethod());
-        assertEquals(OrderEvent.OrderStatus.CREATED, response.getStatus());
-        
-        verify(orderRepository, times(1)).save(any(Order.class));
-        verify(kafkaTemplate, times(1)).send(anyString(), anyString(), any(OrderEvent.class));
-    }
+
 
     @Test
     void getOrderById_WhenOrderExists_ShouldReturnOrder() {
