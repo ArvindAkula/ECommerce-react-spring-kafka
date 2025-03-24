@@ -1,12 +1,10 @@
 import React from "react";
+import ECommerceApp from "./components/ECommerceApp";
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <h1>Welcome to our E-Commerce Application</h1>
-        <p>The application is now running correctly!</p>
-      </header>
+      <ECommerceApp />
     </div>
   );
 }
